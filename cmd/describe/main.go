@@ -17,19 +17,19 @@ import (
 
 // Stud add or remove a numerical feature (eg. a mark) in the struct fields"
 type Stud struct {
-	Arithmancy                float64
-	Astronomy                 float64
-	Herbology                 float64
-	DefenseAgainsttheDarkArts float64
-	Divination                float64
-	MuggleStudies             float64
-	AncientRunes              float64
-	HistoryofMagic            float64
-	Transfiguration           float64
-	Potions                   float64
-	CareofMagicalCreatures    float64
-	Charms                    float64
-	Flying                    float64
+	F0  float64
+	F1  float64
+	F2  float64
+	F3  float64
+	F4  float64
+	F5  float64
+	F6  float64
+	F7  float64
+	F8  float64
+	F9  float64
+	F10 float64
+	F11 float64
+	F12 float64
 }
 
 // Modify these values according to the dataset and the structure Stud
@@ -55,7 +55,6 @@ var (
 
 func floatToString(f float64) string {
 	return big.NewFloat(f).Text('f', 2)
-	// return strconv.FormatFloat(f, 'f', -1, 64)
 }
 
 func print() {
@@ -101,50 +100,84 @@ func print() {
 }
 
 func getQuartiles() {
-	var isOdd int
-	if count%2 == 0 {
-		isOdd = 1
-	}
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Arithmancy < studs[j].Arithmancy
+		return studs[i].F0 < studs[j].F0
 	})
+	q1[0] = studs[count/4-1].F0
+	q2[0] = (studs[count/2].F0 + studs[count/2-1].F0) / 2
+	q3[0] = studs[count/4*3-1].F0
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Astronomy < studs[j].Astronomy
+		return studs[i].F1 < studs[j].F1
 	})
+	q1[1] = studs[count/4-1].F1
+	q2[1] = (studs[count/2].F1 + studs[count/2-1].F1) / 2
+	q3[1] = studs[count/4*3-1].F1
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Herbology < studs[j].Herbology
+		return studs[i].F2 < studs[j].F2
 	})
+	q1[2] = studs[count/4-1].F2
+	q2[2] = (studs[count/2].F2 + studs[count/2-1].F2) / 2
+	q3[2] = studs[count/4*3-1].F2
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].DefenseAgainsttheDarkArts < studs[j].DefenseAgainsttheDarkArts
+		return studs[i].F3 < studs[j].F3
 	})
+	q1[3] = studs[count/4-1].F3
+	q2[3] = (studs[count/2].F3 + studs[count/2-1].F3) / 2
+	q3[3] = studs[count/4*3-1].F3
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Divination < studs[j].Divination
+		return studs[i].F4 < studs[j].F4
 	})
+	q1[4] = studs[count/4-1].F4
+	q2[4] = (studs[count/2].F4 + studs[count/2-1].F4) / 2
+	q3[4] = studs[count/4*3-1].F4
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].MuggleStudies < studs[j].MuggleStudies
+		return studs[i].F5 < studs[j].F5
 	})
+	q1[5] = studs[count/4-1].F5
+	q2[5] = (studs[count/2].F5 + studs[count/2-1].F5) / 2
+	q3[5] = studs[count/4*3-1].F5
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].AncientRunes < studs[j].AncientRunes
+		return studs[i].F6 < studs[j].F6
 	})
+	q1[6] = studs[count/4-1].F6
+	q2[6] = (studs[count/2].F6 + studs[count/2-1].F6) / 2
+	q3[6] = studs[count/4*3-1].F6
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].HistoryofMagic < studs[j].HistoryofMagic
+		return studs[i].F7 < studs[j].F7
 	})
+	q1[7] = studs[count/4-1].F7
+	q2[7] = (studs[count/2].F7 + studs[count/2-1].F7) / 2
+	q3[7] = studs[count/4*3-1].F7
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Transfiguration < studs[j].Transfiguration
+		return studs[i].F8 < studs[j].F8
 	})
+	q1[8] = studs[count/4-1].F8
+	q2[8] = (studs[count/2].F8 + studs[count/2-1].F8) / 2
+	q3[8] = studs[count/4*3-1].F8
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Potions < studs[j].Potions
+		return studs[i].F9 < studs[j].F9
 	})
+	q1[9] = studs[count/4-1].F9
+	q2[9] = (studs[count/2].F9 + studs[count/2-1].F9) / 2
+	q3[9] = studs[count/4*3-1].F9
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].CareofMagicalCreatures < studs[j].CareofMagicalCreatures
+		return studs[i].F10 < studs[j].F10
 	})
+	q1[10] = studs[count/4-1].F10
+	q2[10] = (studs[count/2].F10 + studs[count/2-1].F10) / 2
+	q3[10] = studs[count/4*3-1].F10
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Charms < studs[j].Charms
+		return studs[i].F11 < studs[j].F11
 	})
+	q1[11] = studs[count/4-1].F11
+	q2[11] = (studs[count/2].F11 + studs[count/2-1].F11) / 2
+	q3[11] = studs[count/4*3-1].F11
 	sort.Slice(studs, func(i, j int) bool {
-		return studs[i].Flying < studs[j].Flying
+		return studs[i].F12 < studs[j].F12
 	})
-
+	q1[12] = studs[count/4-1].F12
+	q2[12] = (studs[count/2].F12 + studs[count/2-1].F12) / 2
+	q3[12] = studs[count/4*3-1].F12
 }
 
 func getStd() {
@@ -159,7 +192,6 @@ func getStd() {
 		std[i] /= float64(count)
 		std[i] = math.Sqrt(std[i])
 	}
-
 }
 
 func initMins() {
@@ -205,19 +237,19 @@ func main() {
 			mean[j] += v
 		}
 		studs = append(studs, Stud{
-			Arithmancy:                f[0],
-			Astronomy:                 f[1],
-			Herbology:                 f[2],
-			DefenseAgainsttheDarkArts: f[3],
-			Divination:                f[4],
-			MuggleStudies:             f[5],
-			AncientRunes:              f[6],
-			HistoryofMagic:            f[7],
-			Transfiguration:           f[8],
-			Potions:                   f[9],
-			CareofMagicalCreatures:    f[10],
-			Charms:                    f[11],
-			Flying:                    f[12],
+			F0:  f[0],
+			F1:  f[1],
+			F2:  f[2],
+			F3:  f[3],
+			F4:  f[4],
+			F5:  f[5],
+			F6:  f[6],
+			F7:  f[7],
+			F8:  f[8],
+			F9:  f[9],
+			F10: f[10],
+			F11: f[11],
+			F12: f[12],
 		},
 		)
 		count++
@@ -228,6 +260,6 @@ func main() {
 		mean[i] /= float64(count)
 	}
 	getStd()
-	// getQuartiles()
+	getQuartiles()
 	print()
 }
