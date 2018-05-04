@@ -34,7 +34,7 @@ type Stud struct {
 
 // Modify these values according to the dataset and the structure Stud
 const (
-	filePath               = "../../assets/dataset_train.csv"
+	filePath               = "assets/dataset_train.csv"
 	lenFeatures            = 19
 	indexNumericalFeatures = 6
 	numericalFeatures      = lenFeatures - indexNumericalFeatures
