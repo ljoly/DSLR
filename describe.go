@@ -184,8 +184,8 @@ func getStd() {
 	for _, s := range studs {
 		stud := reflect.ValueOf(s)
 		for i := 0; i < stud.NumField(); i++ {
-			abs := math.Abs(stud.Field(i).Interface().(float64) - mean[i])
-			std[i] += abs * abs
+			diff := stud.Field(i).Interface().(float64) - mean[i]
+			std[i] += diff * diff
 		}
 	}
 	for i := range std {
