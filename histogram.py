@@ -22,6 +22,7 @@ huffle = [[], [], [], [], [], [], [], [], [], [], [], [], []]
 
 # Array of arrays of marks
 houses = [gryf, raven, slyth, huffle]
+lenHouses = len(houses)
 
 # Arrays of Std Deviations
 gryfStd = [0.0] * lenFeatures
@@ -46,10 +47,11 @@ def normalizeData(topic, minV, maxV):
 
 
 def getStd(topic, mean):
+    # print(topic, mean)
     std = 0
     for mark in topic:
         std += (mark - mean) * (mark - mean)
-    std /= len(topic)
+    std /= len(topic) - 1
     std = math.sqrt(std)
     return std
 
@@ -64,17 +66,22 @@ def getMinMax(topic):
 
 def getMean(topic):
     mean = 0
+    for i in range(len(topic)):
+        mean += topic[i]
+    mean /= len(topic)
+    return mean
+
+
+def formatData(topic):
     for i, elem in enumerate(topic):
         # Replace empty strings by '0' value
         if not elem:
             topic[i] = 0.0
         else:
             topic[i] = float(elem)
-        mean += topic[i]
-    mean /= len(topic)
-    return mean
+    return topic
 
-
+# main
 del rawdata[0]
 for row in rawdata:
     tmp = gryf
@@ -84,22 +91,20 @@ for row in rawdata:
         tmp = slyth
     elif row[1] == 'Hufflepuff':
         tmp = huffle
-    for j in range(len(tmp)):
+    for j in range(lenFeatures):
         tmp[j].append(row[j + indexFeatures])
-
 # Get all stats
 for i, house in enumerate(houses):
     for j, row in enumerate(house):
-        mean = getMean(row)
-        stdMean[j] += mean
-        minV, maxV = getMinMax(row)
-        housesStd[i][j] = getStd(row, mean)
-        row = normalizeData(row, minV, maxV)
-
+        house[j] = formatData(row)
+        minV, maxV = getMinMax(house[j])
+        house[j] = normalizeData(house[j], minV, maxV)
+        mean = getMean(house[j])
+        housesStd[i][j] = getStd(house[j], mean)
+        stdMean[j] += housesStd[i][j]
+        
 for i, mean in enumerate(stdMean):
-    stdMean[i] /= lenFeatures
-
-print(stdMean)
+    stdMean[i] /= lenHouses
 
 # Get Std
 for i, house in enumerate(housesStd):
@@ -107,32 +112,22 @@ for i, house in enumerate(housesStd):
         featuresStd[j] += (row - stdMean[j]) * (row - stdMean[j])
 
 for i, std in enumerate(featuresStd):
-    featuresStd[i] /= len(houses)
+    featuresStd[i] /= lenHouses - 1
     featuresStd[i] = math.sqrt(featuresStd[i])
 
-
-print(featuresStd)
+# Get index of min std
+minIndex = 0
+for i in range(lenFeatures):
+    if featuresStd[i] < featuresStd[minIndex]:
+        minIndex = i
 
 kwargs = dict(histtype='stepfilled', alpha=0.3)
-
 plt.figure()
-plt.hist(gryf[0], **kwargs)
-plt.hist(raven[0], **kwargs)
-plt.hist(slyth[0], **kwargs)
-plt.hist(huffle[0], **kwargs)
-plt.title('Arithmancy')
-plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
-plt.xlabel('Marks', fontsize=16)
-plt.ylabel('Students', fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-
-plt.figure()
-plt.hist(gryf[8], **kwargs)
-plt.hist(raven[8], **kwargs)
-plt.hist(slyth[8], **kwargs)
-plt.hist(huffle[8], **kwargs)
-plt.title('Potions')
+plt.hist(gryf[minIndex], **kwargs)
+plt.hist(raven[minIndex], **kwargs)
+plt.hist(slyth[minIndex], **kwargs)
+plt.hist(huffle[minIndex], **kwargs)
+plt.title(features[minIndex])
 plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
 plt.xlabel('Marks', fontsize=16)
 plt.ylabel('Students', fontsize=16)
