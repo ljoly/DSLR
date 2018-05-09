@@ -121,17 +121,23 @@ for i in range(lenFeatures):
     if featuresStd[i] < featuresStd[minIndex]:
         minIndex = i
 
+print('The most homogeneous feature between the four houses is:', features[minIndex])
+
+# Plot
 kwargs = dict(histtype='stepfilled', alpha=0.3)
-plt.figure()
-plt.hist(gryf[minIndex], **kwargs)
-plt.hist(raven[minIndex], **kwargs)
-plt.hist(slyth[minIndex], **kwargs)
-plt.hist(huffle[minIndex], **kwargs)
-plt.title(features[minIndex])
-plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
-plt.xlabel('Marks', fontsize=16)
-plt.ylabel('Students', fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
+
+for i in range(lenFeatures):
+    plt.figure(i)
+
+    plt.hist(gryf[i], **kwargs)
+    plt.hist(raven[i], **kwargs)
+    plt.hist(slyth[i], **kwargs)
+    plt.hist(huffle[i], **kwargs)
+    plt.title(features[i])
+    plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
+    plt.xlabel('Marks', fontsize=16)
+    plt.ylabel('Students', fontsize=16)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
 
 plt.show()
