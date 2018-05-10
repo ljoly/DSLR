@@ -135,7 +135,7 @@ for i in range(lenFeatures):
     plt.hist(huffle[i], **kwargs)
     plt.title(features[i])
     plt.axvline(getMean(gryf[i] + raven[i] + slyth[i] + huffle[i]), color='k', linestyle='dashed', linewidth=1)
-    plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
+    plt.legend(['Std mean', 'Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
     plt.xlabel('Marks', fontsize=16)
     plt.ylabel('Students', fontsize=16)
     plt.xticks(fontsize=14)

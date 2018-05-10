@@ -65,7 +65,7 @@ for i in range(lenFeatures):
 
 # Compare values
 i1 = 0
-i2 = 12
+i2 = 1
 for i in range(lenFeatures):
     for j in range(lenFeatures):
         if stds[i] != stds[j] and abs(stds[i] - stds[j]) < abs(stds[i1] - stds[i2]):
