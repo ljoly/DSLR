@@ -1,5 +1,4 @@
 import csv
-import math
 import ml_functions as ml
 
 csvfile = open('assets/dataset_train.csv')

@@ -1,7 +1,5 @@
 import csv
 import sys
-import math
-import numpy as np
 import ml_functions as ml
 import matplotlib.pyplot as plt
 
@@ -78,7 +76,7 @@ for i, house in enumerate(housesStd):
 
 for i, std in enumerate(featuresStd):
     featuresStd[i] /= lenHouses - 1
-    featuresStd[i] = math.sqrt(featuresStd[i])
+    featuresStd[i] = featuresStd[i] ** 0.5
 
 # Get index of min std
 minIndex = 0
