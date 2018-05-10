@@ -34,6 +34,7 @@ def formatData(topic):
         topic[i] = float(elem)
     return topic
 
+
 def isFormatted(row):
     for r in row:
         if r == "":
