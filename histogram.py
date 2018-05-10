@@ -47,15 +47,16 @@ for i in range(lenHouses):
 # main
 del rawdata[0]
 for row in rawdata:
-    tmp = gryf
-    if row[1] == 'Ravenclaw':
-        tmp = raven
-    elif row[1] == 'Slytherin':
-        tmp = slyth
-    elif row[1] == 'Hufflepuff':
-        tmp = huffle
-    for j in range(lenFeatures):
-        tmp[j].append(row[j + indexFeatures])
+    if ml.isFormatted(row):
+        tmp = gryf
+        if row[1] == 'Ravenclaw':
+            tmp = raven
+        elif row[1] == 'Slytherin':
+            tmp = slyth
+        elif row[1] == 'Hufflepuff':
+            tmp = huffle
+        for j in range(lenFeatures):
+            tmp[j].append(row[j + indexFeatures])
 # Get all stats
 for i, house in enumerate(houses):
     for j, row in enumerate(house):

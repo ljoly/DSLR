@@ -194,6 +194,15 @@ func getStd() {
 	}
 }
 
+func isFormatted(line []string) bool {
+	for i := range line {
+		if line[i] == "" {
+			return false
+		}
+	}
+	return true
+}
+
 func initMins() {
 	for i := 0; i < numericalFeatures; i++ {
 		min[i] = math.MaxUint64
@@ -220,39 +229,41 @@ func main() {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		var f [numericalFeatures]float64
-		for i := indexNumericalFeatures; i < lenFeatures; i++ {
-			j := i - indexNumericalFeatures
-			v, _ := strconv.ParseFloat(line[i], 64)
-			// save value in order to build []Stud
-			f[j] = v
-			// get min for each feature
-			if v < min[j] {
-				min[j] = v
+		if isFormatted(line) {
+			var f [numericalFeatures]float64
+			for i := indexNumericalFeatures; i < lenFeatures; i++ {
+				j := i - indexNumericalFeatures
+				v, _ := strconv.ParseFloat(line[i], 64)
+				// save value in order to build []Stud
+				f[j] = v
+				// get min for each feature
+				if v < min[j] {
+					min[j] = v
+				}
+				// get max for each feature
+				if v > max[j] {
+					max[j] = v
+				}
+				mean[j] += v
 			}
-			// get max for each feature
-			if v > max[j] {
-				max[j] = v
-			}
-			mean[j] += v
+			studs = append(studs, Stud{
+				F0:  f[0],
+				F1:  f[1],
+				F2:  f[2],
+				F3:  f[3],
+				F4:  f[4],
+				F5:  f[5],
+				F6:  f[6],
+				F7:  f[7],
+				F8:  f[8],
+				F9:  f[9],
+				F10: f[10],
+				F11: f[11],
+				F12: f[12],
+			},
+			)
+			count++
 		}
-		studs = append(studs, Stud{
-			F0:  f[0],
-			F1:  f[1],
-			F2:  f[2],
-			F3:  f[3],
-			F4:  f[4],
-			F5:  f[5],
-			F6:  f[6],
-			F7:  f[7],
-			F8:  f[8],
-			F9:  f[9],
-			F10: f[10],
-			F11: f[11],
-			F12: f[12],
-		},
-		)
-		count++
 	}
 	// fmt.Println(len(studs), cap(studs))
 	// get mean

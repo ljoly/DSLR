@@ -7,7 +7,7 @@ def normalizeData(topic, minV, maxV):
 def getStd(topic, mean):
     std = 0
     for mark in topic:
-        std += (mark - mean) ** 2 
+        std += (mark - mean) ** 2
     std /= len(topic) - 1
     std = std ** 0.5
     return std
@@ -31,9 +31,11 @@ def getMean(topic):
 
 def formatData(topic):
     for i, elem in enumerate(topic):
-        # Replace empty strings by '0' value
-        if not elem:
-            topic[i] = 0.0
-        else:
-            topic[i] = float(elem)
+        topic[i] = float(elem)
     return topic
+
+def isFormatted(row):
+    for r in row:
+        if r == "":
+            return False
+    return True
