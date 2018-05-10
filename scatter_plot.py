@@ -1,5 +1,6 @@
 import csv
 import math
+import ml_functions as ml
 
 csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
@@ -13,34 +14,6 @@ for i in range(len(rawdata[0]) - indexFeatures):
 
 marks = []
 stds = []
-
-def getStd(feature, mean):
-    # print(feature, mean)
-    std = 0
-    for mark in feature:
-        std += (mark - mean) * (mark - mean)
-    std /= len(feature) - 1
-    std = math.sqrt(std)
-    return std
-
-def getMean(feature):
-    mean = 0
-    for i in range(len(feature)):
-        mean += feature[i]
-    mean /= len(feature)
-    return mean
-
-def normalizeData(feature, minV, maxV):
-    for i, _ in enumerate(feature):
-        feature[i] = (feature[i]-minV)/(maxV-minV)
-    return feature
-
-def getMinMax(feature):
-    feature = sorted(feature)
-    minV = feature[0]
-    maxV = feature[len(feature) - 1]
-    return minV, maxV
-
 
 # Get data
 for i in range(lenFeatures):
@@ -58,10 +31,10 @@ for row in rawdata:
 
 # Get stats
 for i in range(lenFeatures):
-    minV, maxV = getMinMax(marks[i])
-    marks[i] = normalizeData(marks[i], minV, maxV)
-    mean = getMean(marks[i])
-    stds.append(getStd(marks[i], mean))
+    minV, maxV = ml.getMinMax(marks[i])
+    marks[i] = ml.normalizeData(marks[i], minV, maxV)
+    mean = ml.getMean(marks[i])
+    stds.append(ml.getStd(marks[i], mean))
 
 # Compare values
 i1 = 0

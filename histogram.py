@@ -2,6 +2,7 @@ import csv
 import sys
 import math
 import numpy as np
+import ml_functions as ml
 import matplotlib.pyplot as plt
 
 csvfile = open('assets/dataset_train.csv')
@@ -39,48 +40,6 @@ featuresStd = [0.0] * lenFeatures
 # Array of Mean of Std
 stdMean = [0.0] * lenFeatures
 
-
-def normalizeData(topic, minV, maxV):
-    for i, _ in enumerate(topic):
-        topic[i] = (topic[i]-minV)/(maxV-minV)
-    return topic
-
-
-def getStd(topic, mean):
-    # print(topic, mean)
-    std = 0
-    for mark in topic:
-        std += (mark - mean) * (mark - mean)
-    std /= len(topic) - 1
-    std = math.sqrt(std)
-    return std
-
-
-def getMinMax(topic):
-    # Get min and max values
-    topic = sorted(topic)
-    minV = topic[0]
-    maxV = topic[len(topic) - 1]
-    return minV, maxV
-
-
-def getMean(topic):
-    mean = 0
-    for i in range(len(topic)):
-        mean += topic[i]
-    mean /= len(topic)
-    return mean
-
-
-def formatData(topic):
-    for i, elem in enumerate(topic):
-        # Replace empty strings by '0' value
-        if not elem:
-            topic[i] = 0.0
-        else:
-            topic[i] = float(elem)
-    return topic
-
 # main
 del rawdata[0]
 for row in rawdata:
@@ -96,13 +55,13 @@ for row in rawdata:
 # Get all stats
 for i, house in enumerate(houses):
     for j, row in enumerate(house):
-        house[j] = formatData(row)
-        minV, maxV = getMinMax(house[j])
-        house[j] = normalizeData(house[j], minV, maxV)
-        mean = getMean(house[j])
-        housesStd[i][j] = getStd(house[j], mean)
+        house[j] = ml.formatData(row)
+        minV, maxV = ml.getMinMax(house[j])
+        house[j] = ml.normalizeData(house[j], minV, maxV)
+        mean = ml.getMean(house[j])
+        housesStd[i][j] = ml.getStd(house[j], mean)
         stdMean[j] += housesStd[i][j]
-        
+
 for i, mean in enumerate(stdMean):
     stdMean[i] /= lenHouses
 
@@ -121,7 +80,8 @@ for i in range(lenFeatures):
     if featuresStd[i] < featuresStd[minIndex]:
         minIndex = i
 
-print('The most homogeneous feature between the four houses is:', features[minIndex])
+print('The most homogeneous feature between the four houses is:',
+      features[minIndex])
 
 # Plot
 kwargs = dict(histtype='stepfilled', ec='black', alpha=0.3)
@@ -134,8 +94,10 @@ for i in range(lenFeatures):
     plt.hist(slyth[i], **kwargs)
     plt.hist(huffle[i], **kwargs)
     plt.title(features[i])
-    plt.axvline(getMean(gryf[i] + raven[i] + slyth[i] + huffle[i]), color='k', linestyle='dashed', linewidth=1)
-    plt.legend(['Std mean', 'Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
+    plt.axvline(ml.getMean(gryf[i] + raven[i] + slyth[i] +
+                           huffle[i]), color='k', linestyle='dashed', linewidth=1)
+    plt.legend(['Std mean', 'Gryffindor', 'Ravenclaw',
+                'Slytherin', 'Hufflepuff'])
     plt.xlabel('Marks', fontsize=16)
     plt.ylabel('Students', fontsize=16)
     plt.xticks(fontsize=14)
