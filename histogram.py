@@ -124,7 +124,7 @@ for i in range(lenFeatures):
 print('The most homogeneous feature between the four houses is:', features[minIndex])
 
 # Plot
-kwargs = dict(histtype='stepfilled', alpha=0.3)
+kwargs = dict(histtype='stepfilled', ec='black', alpha=0.3)
 
 for i in range(lenFeatures):
     plt.figure(i)
@@ -134,6 +134,7 @@ for i in range(lenFeatures):
     plt.hist(slyth[i], **kwargs)
     plt.hist(huffle[i], **kwargs)
     plt.title(features[i])
+    plt.axvline(getMean(gryf[i] + raven[i] + slyth[i] + huffle[i]), color='k', linestyle='dashed', linewidth=1)
     plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
     plt.xlabel('Marks', fontsize=16)
     plt.ylabel('Students', fontsize=16)
