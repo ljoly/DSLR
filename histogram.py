@@ -90,22 +90,18 @@ print('The most homogeneous feature between the four houses is:',
 
 # Plot
 kwargs = dict(histtype='stepfilled', ec='black', alpha=0.3)
-
-for i in range(lenFeatures):
-    plt.figure(i)
-
-    plt.hist(gryf[i], **kwargs)
-    plt.hist(raven[i], **kwargs)
-    plt.hist(slyth[i], **kwargs)
-    plt.hist(huffle[i], **kwargs)
-    plt.title(features[i])
-    plt.axvline(ml.getMean(gryf[i] + raven[i] + slyth[i] +
-                           huffle[i]), color='k', linestyle='dashed', linewidth=1)
-    plt.legend(['Std mean', 'Gryffindor', 'Ravenclaw',
-                'Slytherin', 'Hufflepuff'])
-    plt.xlabel('Marks', fontsize=16)
-    plt.ylabel('Students', fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+plt.hist(gryf[minIndex], **kwargs)
+plt.hist(raven[minIndex], **kwargs)
+plt.hist(slyth[minIndex], **kwargs)
+plt.hist(huffle[minIndex], **kwargs)
+plt.title(features[minIndex])
+plt.axvline(ml.getMean(gryf[minIndex] + raven[minIndex] + slyth[minIndex] +
+                       huffle[minIndex]), color='k', linestyle='dashed', linewidth=1)
+plt.legend(['Std mean', 'Gryffindor', 'Ravenclaw',
+            'Slytherin', 'Hufflepuff'])
+plt.xlabel('Marks', fontsize=16)
+plt.ylabel('Students', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
 
 plt.show()
