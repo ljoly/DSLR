@@ -1,5 +1,6 @@
 import csv
 import ml_functions as ml
+import matplotlib.pyplot as plt
 
 csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
@@ -20,12 +21,8 @@ for i in range(lenFeatures):
 
 del rawdata[0]
 for row in rawdata:
-    for i in range(lenFeatures):
-        # Replace empty strings by '0' value
-        if not row[i + indexFeatures]:
-            marks[i].append(0.0)
-        else:
-            # Convert to float and push to marks[]
+    if ml.isFormatted(row):
+        for i in range(lenFeatures):
             marks[i].append(float(row[i + indexFeatures]))
 
 # Get stats
@@ -38,9 +35,32 @@ for i in range(lenFeatures):
 # Compare values
 i1 = 0
 i2 = 1
+j1 = 0
+j2 = 1
 for i in range(lenFeatures):
     for j in range(lenFeatures):
-        if stds[i] != stds[j] and abs(stds[i] - stds[j]) < abs(stds[i1] - stds[i2]):
-            i1 = i
-            i2 = j
-print(features[i1], 'and', features[i2], 'are the same features')
+        if stds[i] != stds[j]:
+            if abs(stds[i] - stds[j]) < abs(stds[i1] - stds[i2]):
+                i1 = i
+                i2 = j
+            elif abs(stds[i] - stds[j] > abs(stds[j1] - stds[j2])):
+                j1 = i
+                j2 = j
+        
+print('The most identical features are:', features[i1], 'and', features[i2])
+print('The most different features are:', features[j1], 'and', features[j2])
+
+# Plot
+plt.figure(1)
+plt.title('The most identical features')
+plt.plot(marks[i1], marks[i2], 'o')
+plt.xlabel(features[i1], fontsize=16)
+plt.ylabel(features[i2], fontsize=16)
+
+plt.figure(2)
+plt.title('The most different features')
+plt.plot(marks[j1], marks[j2], 'o')
+plt.xlabel(features[j1], fontsize=16)
+plt.ylabel(features[j2], fontsize=16)
+
+plt.show()
