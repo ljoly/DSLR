@@ -11,25 +11,25 @@ rawdata = list(csv.reader(csvfile))
 # Features: modify indexFeatures according to the dataset
 indexFeatures = 6
 lenFeatures = len(rawdata[0]) - indexFeatures
-features = [] * lenFeatures
+features = []
 for i in range(len(rawdata[0]) - indexFeatures):
     features.append(rawdata[0][i + indexFeatures])
 
 # Arrays of marks for each house
-gryf = [[], [], [], [], [], [], [], [], [], [], [], [], []]
-raven = [[], [], [], [], [], [], [], [], [], [], [], [], []]
-slyth = [[], [], [], [], [], [], [], [], [], [], [], [], []]
-huffle = [[], [], [], [], [], [], [], [], [], [], [], [], []]
+gryf = []
+raven = []
+slyth = []
+huffle = []
 
 # Array of arrays of marks
 houses = [gryf, raven, slyth, huffle]
 lenHouses = len(houses)
 
 # Arrays of Std Deviations
-gryfStd = [0.0] * lenFeatures
-ravenStd = [0.0] * lenFeatures
-slythStd = [0.0] * lenFeatures
-huffleStd = [0.0] * lenFeatures
+gryfStd = []
+ravenStd = []
+slythStd = []
+huffleStd = []
 
 # Array of arrays of Std arrays
 housesStd = [gryfStd, ravenStd, slythStd, huffleStd]
@@ -39,6 +39,12 @@ featuresStd = [0.0] * lenFeatures
 
 # Array of Mean of Std
 stdMean = [0.0] * lenFeatures
+
+# Init arrays with generic size
+for i in range(lenHouses):
+    for _ in range(lenFeatures):
+        houses[i].append([])
+        housesStd[i].append([])
 
 # main
 del rawdata[0]
