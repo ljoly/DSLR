@@ -59,7 +59,7 @@ plt.ylabel(features[i2], fontsize=16)
 
 plt.figure(2)
 plt.title('The most different features')
-plt.plot(marks[j1], marks[j2], 'o')
+plt.plot(marks[j1], marks[j2], 'ro')
 plt.xlabel(features[j1], fontsize=16)
 plt.ylabel(features[j2], fontsize=16)
 
