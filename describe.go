@@ -15,7 +15,7 @@ import (
 	"text/tabwriter"
 )
 
-// Stud add or remove a numerical feature (eg. a mark) in the struct fields"
+// Stud add or remove a numerical feature (eg. a mark) in the struct fields
 type Stud struct {
 	F0  float64
 	F1  float64
