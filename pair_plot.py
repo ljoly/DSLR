@@ -2,7 +2,6 @@ import csv
 import pandas as pd
 import seaborn as sns
 import ml_functions as ml
-import matplotlib.pyplot as plt
 
 csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
