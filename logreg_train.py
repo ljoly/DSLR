@@ -5,7 +5,7 @@ import ml_functions as ml
 from sklearn import linear_model
 
 
-csvfile = open('assets/dataset_train2.csv')
+csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
 del rawdata[0]
 

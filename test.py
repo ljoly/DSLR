@@ -2,7 +2,7 @@ import csv
 import numpy as np
 import ml_functions as ml
 
-csvfile = open('assets/dataset_train2.csv')
+csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
 del rawdata[0]
 
@@ -53,6 +53,6 @@ while True:
     # Gradient descent using Partial derivative of the cost function
     gradient = np.dot(X.T, (h - y)) / len(y)
     theta -= learningRate * gradient
-    if learningRate * gradient[0] <= 0.000001:
+    if learningRate * gradient[0] <= 0.0000001:
         break
 print(theta)
