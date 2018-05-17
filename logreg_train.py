@@ -1,11 +1,13 @@
 import csv
 import numpy as np
 import ml_functions as ml
-from multiprocessing.dummy import Pool as ThreadPool
+from multiprocessing import Pool, Manager, Queue, Process
 
 csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
 del rawdata[0]
+
+houses = ['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff']
 
 
 def sigmoid(z):
@@ -47,6 +49,15 @@ def formatFeatures(houseIndex):
     return data, y
 
 
+def writer(houseIndex, houseWeights):
+    f = open('/tmp/' + houses[houseIndex] + '.csv', 'w')
+
+    s = ''
+    for i in range(len(houseWeights)):
+        s += ',' + str(houseWeights[i])
+    f.write(s)
+
+
 def train(houseIndex):
     data, y = formatFeatures(houseIndex)
     # Normalize
@@ -62,33 +73,17 @@ def train(houseIndex):
     ones = np.ones((len(X), 1))
     X = np.concatenate((ones, X), axis=1)
     # Init features' weights
-    weights = np.transpose([0, 0, 0])
+    currentHouseWeights = np.transpose([0, 0, 0])
     learningRate = 0.1
     iterations = 642435
     for i in range(iterations):
-        weights = updateWeights(X, y, weights, learningRate)
-    print('BYEBYE', houseIndex, '------>', weights)
-    return weights
+        currentHouseWeights = updateWeights(
+            X, y, currentHouseWeights, learningRate)
+    writer(houseIndex, currentHouseWeights)
 
 
-f = open("assets/weights.csv", "w+")
-
-houses = ['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff']
+jobs = []
 for i in range(len(houses)):
-    houseWeight = train(i)
-    # Save weights
-    s = houses[i]
-    for j in range(len(houseWeight)):
-        s += ',' + str(houseWeight[j])
-    s += '\n'
-    f.write(s)
-
-# houses = [0, 1, 2, 3]
-# pool = ThreadPool(len(houses))
-# houseWeight = pool.map(train, houses)
-# print('NON')
-
-# pool.close()
-# pool.join()
-
-# print(houseWeight)
+    p = Process(target=train, args=(i,))
+    jobs.append(p)
+    p.start()
