@@ -1,7 +1,7 @@
 import csv
 import numpy as np
 import ml_functions as ml
-from multiprocessing import Pool, Manager, Queue, Process
+from multiprocessing import Process
 
 csvfile = open('assets/dataset_train.csv')
 rawdata = list(csv.reader(csvfile))
@@ -27,7 +27,7 @@ def updateWeights(X, y, weights, learningRate):
     return weights
 
 
-def formatFeatures(houseIndex):
+def formatFeatures():
     # Get data[house, herbology, ancient runes]
     data = []
     # Isolating feature House
@@ -37,13 +37,13 @@ def formatFeatures(houseIndex):
     for row in rawdata:
         if ml.isFormatted(row):
             if row[1] == 'Gryffindor':
-                y.append(1.0) if houseIndex == 0 else y.append(0.0)
+                y.append(1.0)
             elif row[1] == 'Ravenclaw':
-                y.append(1.0) if houseIndex == 1 else y.append(0.0)
+                y.append(2.0)
             elif row[1] == 'Slytherin':
-                y.append(1.0) if houseIndex == 2 else y.append(0.0)
+                y.append(3.0)
             elif row[1] == 'Hufflepuff':
-                y.append(1.0) if houseIndex == 3 else y.append(0.0)
+                y.append(4.0)
             data[0].append(float(row[8]))
             data[1].append(float(row[12]))
     return data, y
@@ -51,15 +51,17 @@ def formatFeatures(houseIndex):
 
 def writer(houseIndex, houseWeights):
     f = open('/tmp/' + houses[houseIndex] + '.csv', 'w')
-
     s = ''
     for i in range(len(houseWeights)):
-        s += ',' + str(houseWeights[i])
+        s += str(houseWeights[i])
+        if i < len(houseWeights) - 1:
+            s += ','
+    s += '\n'
     f.write(s)
+    f.close()
 
 
-def train(houseIndex):
-    data, y = formatFeatures(houseIndex)
+def train(houseIndex, data, y):
     # Normalize
     for i in range(2):
         minV, maxV = ml.getMinMax(data[i])
@@ -82,8 +84,31 @@ def train(houseIndex):
     writer(houseIndex, currentHouseWeights)
 
 
-jobs = []
-for i in range(len(houses)):
-    p = Process(target=train, args=(i,))
-    jobs.append(p)
+def formatCurrentY(y, houseIndex):
+    tmpY = list(y)
+    for i in range(len(tmpY)):
+        if tmpY[i] == float(houseIndex):
+            tmpY[i] = 1.0
+        else:
+            tmpY[i] = 0.0
+    return tmpY
+
+
+data, rawY = formatFeatures()
+for i in range(1, 5):
+    y = formatCurrentY(rawY, i)
+    p = Process(target=train, args=(i-1, data, y))
     p.start()
+p.join()
+
+# Save weights
+f = open('assets/weights.csv', 'w')
+for h in houses:
+    csvfile = open('/tmp/' + h + '.csv')
+    rawdata = list(csv.reader(csvfile))
+    f.write(h + ',')
+    for i in range(len(rawdata[0])):
+        f.write(rawdata[0][i])
+        if i < len(rawdata[0]) - 1:
+            f.write(',')
+    f.write('\n')
