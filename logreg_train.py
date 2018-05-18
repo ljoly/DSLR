@@ -1,13 +1,8 @@
+import sys
 import csv
 import numpy as np
 import ml_functions as ml
 from multiprocessing import Process
-
-csvfile = open('assets/dataset_train.csv')
-rawdata = list(csv.reader(csvfile))
-del rawdata[0]
-
-houses = ['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff']
 
 
 def sigmoid(z):
@@ -94,21 +89,29 @@ def formatCurrentY(y, houseIndex):
     return tmpY
 
 
-data, rawY = formatFeatures()
-for i in range(1, 5):
-    y = formatCurrentY(rawY, i)
-    p = Process(target=train, args=(i-1, data, y))
-    p.start()
-p.join()
-
-# Save weights
-f = open('assets/weights.csv', 'w')
-for h in houses:
-    csvfile = open('/tmp/' + h + '.csv')
+if __name__ == '__main__':
+    if (len(sys.argv) < 2):
+        print("No argument given")
+        exit()
+    csvfile = open(sys.argv[1])
     rawdata = list(csv.reader(csvfile))
-    f.write(h + ',')
-    for i in range(len(rawdata[0])):
-        f.write(rawdata[0][i])
-        if i < len(rawdata[0]) - 1:
-            f.write(',')
-    f.write('\n')
+    del rawdata[0]
+    houses = ['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff']
+    data, rawY = formatFeatures()
+    for i in range(1, 5):
+        y = formatCurrentY(rawY, i)
+        p = Process(target=train, args=(i-1, data, y))
+        p.start()
+    p.join()
+
+    # Save weights
+    f = open('assets/weights.csv', 'w')
+    for h in houses:
+        csvfile = open('/tmp/' + h + '.csv')
+        rawdata = list(csv.reader(csvfile))
+        f.write(h + ',')
+        for i in range(len(rawdata[0])):
+            f.write(rawdata[0][i])
+            if i < len(rawdata[0]) - 1:
+                f.write(',')
+        f.write('\n')
