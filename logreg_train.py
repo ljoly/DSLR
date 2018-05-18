@@ -5,6 +5,18 @@ import ml_functions as ml
 from multiprocessing import Process
 
 
+def writer(houseIndex, houseWeights):
+    f = open('/tmp/' + houses[houseIndex] + '.csv', 'w')
+    s = ''
+    for i in range(len(houseWeights)):
+        s += str(houseWeights[i])
+        if i < len(houseWeights) - 1:
+            s += ','
+    s += '\n'
+    f.write(s)
+    f.close()
+
+
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
@@ -22,46 +34,7 @@ def updateWeights(X, y, weights, learningRate):
     return weights
 
 
-def formatFeatures():
-    # Get data[house, herbology, ancient runes]
-    data = []
-    # Isolating feature House
-    y = []
-    for _ in range(2):
-        data.append([])
-    for row in rawdata:
-        if ml.isFormatted(row):
-            if row[1] == 'Gryffindor':
-                y.append(1.0)
-            elif row[1] == 'Ravenclaw':
-                y.append(2.0)
-            elif row[1] == 'Slytherin':
-                y.append(3.0)
-            elif row[1] == 'Hufflepuff':
-                y.append(4.0)
-            data[0].append(float(row[8]))
-            data[1].append(float(row[12]))
-    return data, y
-
-
-def writer(houseIndex, houseWeights):
-    f = open('/tmp/' + houses[houseIndex] + '.csv', 'w')
-    s = ''
-    for i in range(len(houseWeights)):
-        s += str(houseWeights[i])
-        if i < len(houseWeights) - 1:
-            s += ','
-    s += '\n'
-    f.write(s)
-    f.close()
-
-
 def train(houseIndex, data, y):
-    # Normalize
-    for i in range(2):
-        minV, maxV = ml.getMinMax(data[i])
-        data[i] = ml.normalizeData(data[i], minV, maxV)
-
     # Transpose data into matrix
     X = np.transpose(data)
     # Transpose y into matrix for later computations
@@ -89,9 +62,37 @@ def formatCurrentY(y, houseIndex):
     return tmpY
 
 
+def formatFeatures():
+    # Get data[house, herbology, ancient runes]
+    data = []
+    # Isolating feature House
+    y = []
+    for _ in range(2):
+        data.append([])
+    for row in rawdata:
+        if ml.isFormatted(row):
+            if row[1] == 'Gryffindor':
+                y.append(1.0)
+            elif row[1] == 'Ravenclaw':
+                y.append(2.0)
+            elif row[1] == 'Slytherin':
+                y.append(3.0)
+            elif row[1] == 'Hufflepuff':
+                y.append(4.0)
+            data[0].append(float(row[8]))
+            data[1].append(float(row[12]))
+
+    # Normalize
+    for i in range(2):
+        minV, maxV = ml.getMinMax(data[i])
+        data[i] = ml.normalizeData(data[i], minV, maxV)
+
+    return data, y
+
+
 if __name__ == '__main__':
     if (len(sys.argv) < 2):
-        print("No argument given")
+        print("Argument missing")
         exit()
     csvfile = open(sys.argv[1])
     rawdata = list(csv.reader(csvfile))
