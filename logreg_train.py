@@ -62,25 +62,55 @@ def formatCurrentY(y, houseIndex):
     return tmpY
 
 
+def getMeans():
+    empty_f1 = 0
+    mean_f1 = 0
+    empty_f2 = 0
+    mean_f2 = 0
+    for i, row in enumerate(rawdata):
+        if row[8] == '':
+            empty_f1 += 1
+        else:
+            mean_f1 += float(row[8])
+        # if row[12] == '':
+        if row[7] == '':
+            empty_f2 += 1
+        else:
+            # mean_f2 += float(row[12])
+            mean_f2 += float(row[7])            
+    mean_f1 /= (len(rawdata) - empty_f1)
+    mean_f2 /= (len(rawdata) - empty_f2)
+    return mean_f1, mean_f2
+
+
 def formatFeatures():
-    # Get data[house, herbology, ancient runes]
+    # Get data[house, herbology[8], ancient runes[12]]
+    # Get data[house, herbology, Defense ag.[9]]
     data = []
     # Isolating feature House
     y = []
     for _ in range(2):
         data.append([])
+    mean_f1, mean_f2 = getMeans()
     for row in rawdata:
-        if ml.isFormatted(row):
-            if row[1] == 'Gryffindor':
-                y.append(1.0)
-            elif row[1] == 'Ravenclaw':
-                y.append(2.0)
-            elif row[1] == 'Slytherin':
-                y.append(3.0)
-            elif row[1] == 'Hufflepuff':
-                y.append(4.0)
+        if row[1] == 'Gryffindor':
+            y.append(1.0)
+        elif row[1] == 'Ravenclaw':
+            y.append(2.0)
+        elif row[1] == 'Slytherin':
+            y.append(3.0)
+        elif row[1] == 'Hufflepuff':
+            y.append(4.0)
+        if row[8] == '':
+            data[0].append(mean_f1)
+        else:
             data[0].append(float(row[8]))
-            data[1].append(float(row[12]))
+        # if row[12] == '':
+        if row[7] == '':        
+            data[1].append(mean_f2)
+        else:
+            # data[1].append(float(row[12]))
+            data[1].append(float(row[7]))            
 
     # Normalize
     for i in range(2):

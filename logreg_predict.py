@@ -8,18 +8,48 @@ def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 
+def getMeans():
+    empty_f1 = 0
+    mean_f1 = 0
+    empty_f2 = 0
+    mean_f2 = 0
+    for i, row in enumerate(rawdata):
+        if row[8] == '':
+            empty_f1 += 1
+        else:
+            mean_f1 += float(row[8])
+        # if row[12] == '':
+        if row[7] == '':
+            empty_f2 += 1
+        else:
+            # mean_f2 += float(row[12])
+            mean_f2 += float(row[7])            
+    print(empty_f1, empty_f2)
+    mean_f1 /= (len(rawdata) - empty_f1)
+    mean_f2 /= (len(rawdata) - empty_f2)
+    return mean_f1, mean_f2
+
+
 def formatFeatures():
-    # Get data[herbology, ancient runes]
+    # Get data[house, herbology[8], ancient runes[12]]
+    # Get data[house, herbology, Defense ag.[9]]
     data = []
     for _ in range(2):
         data.append([])
-    f = open('assets/unclassified_indexes.csv', 'w')
+    # f = open('assets/unclassified_indexes.csv', 'w')
+    mean_f1, mean_f2 = getMeans()
     for i, row in enumerate(rawdata):
-        if row[8] != '' and row[12] != '':
-            data[0].append(float(row[8]))
-            data[1].append(float(row[12]))
+        if row[8] == '':
+            data[0].append(mean_f1)
         else:
-            f.write(str(i) + '\n')
+            data[0].append(float(row[8]))
+        # if row[12] == '':
+        if row[7] == '':        
+            data[1].append(mean_f2)
+        else:
+            data[1].append(float(row[7]))            
+            # data[1].append(float(row[12]))
+
 
     # Normalize
     for i in range(2):
@@ -53,8 +83,8 @@ if __name__ == '__main__':
         housesWeights.append(w)
 
     f = open('assets/houses.csv', 'w')
-    # f.write('Index,Hogwarts House\n')
-    f.write('Hogwarts House\n')    
+    f.write('Index,Hogwarts House\n')
+    # f.write('Hogwarts House\n')    
     for i, studMarks in enumerate(X):
         probs = []
         for _, weights in enumerate(housesWeights):
@@ -65,8 +95,8 @@ if __name__ == '__main__':
         for j in range(len(probs)):
             if probs[j] == maxV:
                 house = houses[j]
-        f.write(house + '\n')                
-        # f.write(str(i) + ',' + house + '\n')
+        # f.write(house + '\n')                
+        f.write(str(i) + ',' + house + '\n')
     
     f.close()
     csvfile = open('assets/dataset_truth2.csv')
