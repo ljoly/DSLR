@@ -2,57 +2,66 @@ import sys
 import csv
 import numpy as np
 import ml_functions as ml
+import matplotlib.pyplot as plt
 
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 
-def getMeans():
-    empty_f1 = 0
-    mean_f1 = 0
-    empty_f2 = 0
-    mean_f2 = 0
-    for i, row in enumerate(rawdata):
-        if row[8] == '':
-            empty_f1 += 1
-        else:
-            mean_f1 += float(row[8])
-        # if row[12] == '':
-        if row[7] == '':
-            empty_f2 += 1
-        else:
-            # mean_f2 += float(row[12])
-            mean_f2 += float(row[7])            
-    print(empty_f1, empty_f2)
-    mean_f1 /= (len(rawdata) - empty_f1)
-    mean_f2 /= (len(rawdata) - empty_f2)
-    return mean_f1, mean_f2
+def showDistribution(distribution):
+    kwargs = dict(histtype='stepfilled', ec='black', alpha=0.3, bins=2)
+    for i in range(len(distribution)):
+        plt.hist(distribution[i], **kwargs)
+    plt.title('Distribution')
+    plt.legend(['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff'])
+    plt.xlabel('Houses', fontsize=16)
+    plt.ylabel('Students', fontsize=16)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    
+    plt.show()
+
+
+def predict():
+    f = open('assets/houses.csv', 'w')
+    f.write('Index,Hogwarts House\n')
+    distribution = [[], [], [], []]
+    for i, studMarks in enumerate(X):
+        probs = []
+        for _, weights in enumerate(housesWeights):
+            z = np.dot(studMarks, weights)
+            probs.append(sigmoid(z))
+            _, maxV = ml.getMinMax(probs)
+            house = ''
+            for j in range(len(probs)):
+                if probs[j] == maxV:
+                    house = houses[j]
+        if house == 'Gryffindor':
+            distribution[0].append('Gryffindor')
+        elif house == 'Ravenclaw':
+            distribution[1].append('Ravenclaw')
+        elif house == 'Slytherin':
+            distribution[2].append('Slytherin')
+        elif house == 'Hufflepuff':
+            distribution[3].append('Hufflepuff')
+        f.write(str(i) + ',' + house + '\n')
+    return distribution
 
 
 def formatFeatures():
-    # Get data[house, herbology[8], ancient runes[12]]
-    # Get data[house, herbology, Defense ag.[9]]
     data = []
-    for _ in range(2):
+    for _ in range(lenFeatures):
         data.append([])
-    # f = open('assets/unclassified_indexes.csv', 'w')
-    mean_f1, mean_f2 = getMeans()
-    for i, row in enumerate(rawdata):
-        if row[8] == '':
-            data[0].append(mean_f1)
-        else:
-            data[0].append(float(row[8]))
-        # if row[12] == '':
-        if row[7] == '':        
-            data[1].append(mean_f2)
-        else:
-            data[1].append(float(row[7]))            
-            # data[1].append(float(row[12]))
-
+    for row in rawdata:
+        for i in range(lenFeatures):
+            if row[i + indexFeatures] == '':
+                data[i].append(0.0)
+            else:
+                data[i].append(float(row[i + indexFeatures]))
 
     # Normalize
-    for i in range(2):
+    for i in range(lenFeatures):
         minV, maxV = ml.getMinMax(data[i])
         data[i] = ml.normalizeData(data[i], minV, maxV)
 
@@ -65,7 +74,13 @@ if __name__ == '__main__':
         exit()
     csvfile = open(sys.argv[1])
     rawdata = list(csv.reader(csvfile))
+    # Features: modify indexFeatures according to the dataset
+    # In that case we skip the first two features
+    # The second one has a clone and the first has no impact
+    indexFeatures = 8
+    lenFeatures = len(rawdata[0]) - indexFeatures
     del rawdata[0]
+
     houses = ['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff']
     data = formatFeatures()
 
@@ -82,25 +97,5 @@ if __name__ == '__main__':
             w.append(float(rawWeights[i][j]))
         housesWeights.append(w)
 
-    f = open('assets/houses.csv', 'w')
-    f.write('Index,Hogwarts House\n')
-    # f.write('Hogwarts House\n')    
-    for i, studMarks in enumerate(X):
-        probs = []
-        for _, weights in enumerate(housesWeights):
-            z = np.dot(studMarks, weights)
-            probs.append(sigmoid(z))
-        _, maxV = ml.getMinMax(probs)
-        house = ''
-        for j in range(len(probs)):
-            if probs[j] == maxV:
-                house = houses[j]
-        # f.write(house + '\n')                
-        f.write(str(i) + ',' + house + '\n')
-    
-    f.close()
-    csvfile = open('assets/dataset_truth2.csv')
-    raw = list(csv.reader(csvfile))
-    f = open('assets/dataset_truth_reformat.csv', 'w')
-    for row in raw:
-        f.write(row[1] + '\n')
+    distribution = predict()
+    showDistribution(distribution)

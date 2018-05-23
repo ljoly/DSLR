@@ -21,9 +21,25 @@ def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 
+def costFun(X, y, weights):
+    # Compute the cost of the current weights using Cross-Entropy algorithm
+    m = len(X)
+    z = np.dot(X, weights)
+    predictions = sigmoid(z)
+
+    # Error when y=1
+    cost1 = -y*np.log(predictions)
+    # Error when y=0
+    cost0 = (1-y)*np.log(1-predictions)
+    # Sum of both costs
+    cost = cost1 - cost0
+    # Average cost
+    cost = np.sum(cost)/m
+    return cost
+
+
 def updateWeights(X, y, weights, learningRate):
     m = len(X)
-
     z = np.dot(X, weights)
     predictions = sigmoid(z)
 
@@ -43,12 +59,21 @@ def train(houseIndex, data, y):
     ones = np.ones((len(X), 1))
     X = np.concatenate((ones, X), axis=1)
     # Init features' weights
-    currentHouseWeights = np.transpose([0, 0, 0])
+    currentHouseWeights = []
+    for _ in range(lenFeatures + 1):
+        currentHouseWeights.append(0)
+    currentHouseWeights = np.transpose(currentHouseWeights)
     learningRate = 0.1
-    iterations = 642435
-    for i in range(iterations):
+    prevCost = 1
+    maxIter = 50000
+    for i in range(maxIter):
         currentHouseWeights = updateWeights(
             X, y, currentHouseWeights, learningRate)
+        currentCost = costFun(X, y, currentHouseWeights)
+        if abs(prevCost - currentCost) <= 0.0001:
+            print(i)
+            break
+        prevCost = currentCost
     writer(houseIndex, currentHouseWeights)
 
 
@@ -62,58 +87,27 @@ def formatCurrentY(y, houseIndex):
     return tmpY
 
 
-def getMeans():
-    empty_f1 = 0
-    mean_f1 = 0
-    empty_f2 = 0
-    mean_f2 = 0
-    for i, row in enumerate(rawdata):
-        if row[8] == '':
-            empty_f1 += 1
-        else:
-            mean_f1 += float(row[8])
-        # if row[12] == '':
-        if row[7] == '':
-            empty_f2 += 1
-        else:
-            # mean_f2 += float(row[12])
-            mean_f2 += float(row[7])            
-    mean_f1 /= (len(rawdata) - empty_f1)
-    mean_f2 /= (len(rawdata) - empty_f2)
-    return mean_f1, mean_f2
-
-
 def formatFeatures():
-    # Get data[house, herbology[8], ancient runes[12]]
-    # Get data[house, herbology, Defense ag.[9]]
     data = []
     # Isolating feature House
     y = []
-    for _ in range(2):
+    for _ in range(lenFeatures):
         data.append([])
-    mean_f1, mean_f2 = getMeans()
     for row in rawdata:
-        if row[1] == 'Gryffindor':
-            y.append(1.0)
-        elif row[1] == 'Ravenclaw':
-            y.append(2.0)
-        elif row[1] == 'Slytherin':
-            y.append(3.0)
-        elif row[1] == 'Hufflepuff':
-            y.append(4.0)
-        if row[8] == '':
-            data[0].append(mean_f1)
-        else:
-            data[0].append(float(row[8]))
-        # if row[12] == '':
-        if row[7] == '':        
-            data[1].append(mean_f2)
-        else:
-            # data[1].append(float(row[12]))
-            data[1].append(float(row[7]))            
+        if ml.isFormatted(row):
+            if row[1] == 'Gryffindor':
+                y.append(1.0)
+            elif row[1] == 'Ravenclaw':
+                y.append(2.0)
+            elif row[1] == 'Slytherin':
+                y.append(3.0)
+            elif row[1] == 'Hufflepuff':
+                y.append(4.0)
+            for i in range(lenFeatures):
+                data[i].append(float(row[i + indexFeatures]))
 
     # Normalize
-    for i in range(2):
+    for i in range(lenFeatures):
         minV, maxV = ml.getMinMax(data[i])
         data[i] = ml.normalizeData(data[i], minV, maxV)
 
@@ -126,7 +120,13 @@ if __name__ == '__main__':
         exit()
     csvfile = open(sys.argv[1])
     rawdata = list(csv.reader(csvfile))
+    # Features: modify indexFeatures according to the dataset
+    # In that case we skip the first two features
+    # The second one has a clone and the first has no impact
+    indexFeatures = 8
+    lenFeatures = len(rawdata[0]) - indexFeatures
     del rawdata[0]
+
     houses = ['Gryffindor', 'Ravenclaw', 'Slytherin', 'Hufflepuff']
     data, rawY = formatFeatures()
     for i in range(1, 5):

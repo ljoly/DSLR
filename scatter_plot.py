@@ -46,20 +46,19 @@ for i in range(lenFeatures):
             elif abs(stds[i] - stds[j] > abs(stds[j1] - stds[j2])):
                 j1 = i
                 j2 = j
-        
 print('The most identical features are:', features[i1], 'and', features[i2])
 print('The most different features are:', features[j1], 'and', features[j2])
 
 # Plot
 plt.figure(1)
 plt.title('The most identical features')
-plt.plot(marks[i1], marks[i2], 'o')
+plt.scatter(marks[i1], marks[i2], color=['blue', 'green'])
 plt.xlabel(features[i1], fontsize=16)
 plt.ylabel(features[i2], fontsize=16)
 
 plt.figure(2)
 plt.title('The most different features')
-plt.plot(marks[j1], marks[j2], 'ro')
+plt.scatter(marks[j1], marks[j2], color=['blue', 'green'])
 plt.xlabel(features[j1], fontsize=16)
 plt.ylabel(features[j2], fontsize=16)
 
