@@ -91,8 +91,6 @@ print('The most homogeneous feature between the four houses is:',
 # Plot
 kwargs = dict(histtype='stepfilled', ec='black', alpha=0.3)
 plt.hist(gryf[minIndex], **kwargs)
-print(gryf[minIndex])
-print(len(gryf[minIndex]))
 plt.hist(raven[minIndex], **kwargs)
 plt.hist(slyth[minIndex], **kwargs)
 plt.hist(huffle[minIndex], **kwargs)
