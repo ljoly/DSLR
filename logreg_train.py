@@ -66,12 +66,11 @@ def train(houseIndex, data, y):
     learningRate = 0.1
     prevCost = 1
     maxIter = 50000
-    for i in range(maxIter):
+    for _ in range(maxIter):
         currentHouseWeights = updateWeights(
             X, y, currentHouseWeights, learningRate)
         currentCost = costFun(X, y, currentHouseWeights)
         if abs(prevCost - currentCost) <= 0.0001:
-            print(i)
             break
         prevCost = currentCost
     writer(houseIndex, currentHouseWeights)
